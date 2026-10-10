@@ -3,928 +3,467 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Rody & Gouda</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Rody & Gouda - Pixel Run</title>
 <style>
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  margin: 0;
-  background: #111322;
-  color: white;
-  font-family: Tahoma, Arial, sans-serif;
-  overflow: hidden;
-  user-select: none;
-}
-
-#gameBox {
-  position: relative;
-  width: 100%;
-  height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #111322;
-}
-
-canvas {
-  display: block;
-  width: 100%;
-  max-height: 100dvh;
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
-  image-rendering: pixelated;
-}
-
-#hud {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  left: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  pointer-events: none;
-  font-size: 12px;
-  text-shadow: 2px 2px #222;
-}
-
-.pill {
-  padding: 8px 11px;
-  border: 2px solid #ffffff50;
-  border-radius: 7px;
-  background: #17172cbb;
-}
-
-#message {
-  position: absolute;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(90%, 400px);
-  padding: 12px;
-  background: #19182eeF;
-  border: 2px solid #ff91bd;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 13px;
-  line-height: 1.9;
-  display: none;
-  z-index: 5;
-}
-
-#message button {
-  display: block;
-  margin: 8px auto 0;
-  padding: 7px 20px;
-  background: #ff91bd;
-  color: #241326;
-  border: 0;
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-#controls {
-  position: absolute;
-  bottom: 15px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 16px;
-  direction: ltr;
-  pointer-events: none;
-}
-
-.controlGroup {
-  display: flex;
-  gap: 10px;
-}
-
-.ctrl {
-  pointer-events: auto;
-  width: 57px;
-  height: 57px;
-  background: #22233cce;
-  color: white;
-  border: 2px solid #ffffff66;
-  border-radius: 12px;
-  font-size: 24px;
-  touch-action: none;
-}
-
-.ctrl:active {
-  background: #ff82b4;
-  color: #201329;
-}
-
-#overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background: #101022b9;
-  z-index: 10;
-}
-
-.panel {
-  width: min(100%, 390px);
-  padding: 25px 20px;
-  background: #1b1b35;
-  border: 2px solid #ff91bd;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 0 35px #ff82b430;
-}
-
-.pixelHeart {
-  color: #ff78b0;
-  font-size: 38px;
-  margin: 8px;
-}
-
-.panel h1 {
-  margin: 8px 0;
-  font-size: 27px;
-  color: #ff9cc5;
-}
-
-.panel p {
-  font-size: 13px;
-  line-height: 2;
-  color: #e1dced;
-}
-
-.mainBtn {
-  background: #ff91bd;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
-  font-size: 15px;
-  font-weight: bold;
-  color: #21152a;
-  cursor: pointer;
-}
-
-#levelName {
-  color: #ffd2e4;
-}
-
-@media (min-width: 700px) {
-  #controls {
-    bottom: 18px;
-  }
-
-  .ctrl {
-    width: 64px;
-    height: 64px;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;background:#101323;color:#fff;font-family:Tahoma,Arial,sans-serif;overflow:hidden}
+#app{height:100dvh;display:flex;align-items:center;justify-content:center;position:relative;background:#101323}
+#game{width:100%;height:auto;max-height:100dvh;aspect-ratio:16/9;object-fit:contain;image-rendering:pixelated;display:block}
+#top{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;direction:ltr}
+.logo{font-size:12px;font-weight:bold;letter-spacing:2px;color:#ffb3d2;text-shadow:2px 2px #39233f}
+.stats{text-align:right;direction:rtl;background:#151a2ac9;border:1px solid #ffffff27;border-radius:9px;padding:9px 14px;min-width:112px}
+#score{font-size:24px;font-weight:bold;letter-spacing:2px}
+#best{font-size:11px;color:#b8bfd7;margin-top:4px}
+#stage{position:absolute;top:75px;left:15px;color:#ffffffad;font-size:11px;letter-spacing:1px;pointer-events:none}
+#overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#10132365;z-index:5}
+.panel{width:min(390px,100%);text-align:center;padding:26px 22px;background:#171b30f2;border:1px solid #ff9bc6;border-radius:14px;box-shadow:0 15px 60px #0006}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#ff9bc6}
+h1{font-size:29px;margin:12px 0 5px;color:#fff}
+h1 span{color:#ff9bc6}
+#description{font-size:13px;line-height:2;color:#c8cce0;margin:14px 0 20px}
+.btn{border:0;background:#ff9bc6;color:#211627;padding:13px 27px;border-radius:7px;font-size:14px;font-weight:bold;cursor:pointer}
+.hint{font-size:10px;color:#929bb9;margin-top:17px}
+#bottomHint{position:absolute;bottom:15px;left:0;right:0;text-align:center;font-size:10px;color:#ffffff9c;pointer-events:none}
+#mobileJump{position:absolute;bottom:40px;right:20px;width:75px;height:75px;border-radius:50%;background:#ff9bc62b;border:2px solid #ffb2d1;color:white;font-size:24px;display:none;touch-action:manipulation}
+@media(pointer:coarse){#mobileJump{display:block}#bottomHint{bottom:12px;left:15px;right:auto;max-width:190px;text-align:left}}
+@media(max-width:500px){.panel{padding:20px 15px}h1{font-size:24px}#score{font-size:20px}#top{top:10px;left:10px;right:10px}}
 </style>
 </head>
-
 <body>
-<div id="gameBox">
+<div id="app">
+<canvas id="game" width="960" height="540"></canvas>
 
-  <canvas id="game" width="320" height="180"></canvas>
-
-  <div id="hud">
-    <div class="pill" id="levelName">الغابه الهادئه</div>
-    <div class="pill">♥ <span id="heartCount">0</span></div>
+<div id="top">
+  <div class="logo">RODY <span style="color:white">&</span> GOUDA</div>
+  <div class="stats">
+    <div id="score">00000</div>
+    <div id="best">BEST 00000</div>
   </div>
+</div>
 
-  <div id="message">
-    <div id="messageText"></div>
-    <button id="messageBtn" onclick="closeMessage()">نكمل؟</button>
+<div id="stage">WORLD 01 · GREEN DREAM</div>
+
+<div id="overlay">
+  <div class="panel">
+    <div class="eyebrow">A LITTLE GAME FOR YOU</div>
+    <h1>Rody <span>&</span> Gouda</h1>
+    <p id="description">رحله صغيره في عالم البكسل<br>اجري واقفزي وعدي كل العقبات<br>Gouda هيعمل كل حركاتك بالظبط<br>خلي بالك من الطريق يا Rody</p>
+    <button class="btn" id="mainBtn">ابدأي اللعب</button>
+    <div class="hint">SPACE / ↑ / CLICK TO JUMP</div>
   </div>
+</div>
 
-  <div id="controls">
-    <div class="controlGroup">
-      <button class="ctrl" id="left">◀</button>
-      <button class="ctrl" id="right">▶</button>
-    </div>
-    <div class="controlGroup">
-      <button class="ctrl" id="jump">▲</button>
-    </div>
-  </div>
-
-  <div id="overlay">
-    <div class="panel">
-      <div class="pixelHeart">♥</div>
-      <h1 id="overlayTitle">Rody & Gouda</h1>
-      <p id="overlayText">
-        مغامره صغيره معموله مخصوص ليكي<br>
-        امشي واجمعي القلوب وخليكي مع Gouda<br>
-        كل مرحله فيها حكايه صغيره مستنياكي
-      </p>
-      <button class="mainBtn" id="startBtn" onclick="startGame()">ابدأي المغامره</button>
-    </div>
-  </div>
-
+<button id="mobileJump">↑</button>
+<div id="bottomHint">SPACE OR TAP TO JUMP</div>
 </div>
 
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-
 ctx.imageSmoothingEnabled = false;
 
-const W = 320;
-const H = 180;
-const FLOOR = 153;
+const W=960,H=540,GROUND=420;
+const scoreEl=document.getElementById("score");
+const bestEl=document.getElementById("best");
+const stageEl=document.getElementById("stage");
+const overlay=document.getElementById("overlay");
+const mainBtn=document.getElementById("mainBtn");
+const description=document.getElementById("description");
 
-const levels = [
-  {
-    name: "الغابه الهادئه",
-    sky: "#9bd7cf",
-    far: "#619c91",
-    ground: "#376b4a",
-    top: "#70b96b",
-    platform: "#528c58",
-    type: 0,
-    length: 620,
-    message: "يا Rody دي اول خطوه في مغامرتنا واتمني كل خطوه فيها تكون سبب في ابتسامتك"
-  },
-  {
-    name: "غابه النجوم",
-    sky: "#292c58",
-    far: "#414775",
-    ground: "#252e48",
-    top: "#626b9b",
-    platform: "#454e7a",
-    type: 1,
-    length: 720,
-    message: "وسط كل النجوم دي في حاجه واحده مميزه بالنسبالي وهي اني اقدر اشاركك اللحظه دي"
-  },
-  {
-    name: "الجبل التلجي",
-    sky: "#b9e7f7",
-    far: "#82bbd8",
-    ground: "#688da8",
-    top: "#e8f8ff",
-    platform: "#a8d5e9",
-    type: 2,
-    length: 760,
-    message: "حتى لو الطريق صعب هنكمل خطوه خطوه والمهم اننا منستعجلش الوصول"
-  },
-  {
-    name: "طريق السحاب",
-    sky: "#f9c6d7",
-    far: "#d99cbe",
-    ground: "#765d91",
-    top: "#d8b1df",
-    platform: "#a983c2",
-    type: 3,
-    length: 780,
-    message: "في حاجات بسيطه بتخلي اليوم احلى زي ضحكه حلوه او رساله تيجي في وقتها"
-  },
-  {
-    name: "المدينه وقت الغروب",
-    sky: "#f6a078",
-    far: "#bd6b8b",
-    ground: "#49405f",
-    top: "#b97881",
-    platform: "#79506f",
-    type: 4,
-    length: 850,
-    message: "وصلنا بعيد يا Rody وكل قلب جمعناه بيفكرني ان اجمل الحاجات مش لازم تكون كبيره"
-  },
-  {
-    name: "مكاننا المميز",
-    sky: "#222849",
-    far: "#41466f",
-    ground: "#292c49",
-    top: "#e58cba",
-    platform: "#9b679e",
-    type: 5,
-    length: 650,
-    message: "دي اخر مرحله في اللعبه بس مش اخر ذكري حلوه ممكن نصنعها سوا"
-  }
+let state="ready";
+let last=0, elapsed=0, distance=0, score=0;
+let speed=7, spawnTimer=0, groundOffset=0, sceneryOffset=0;
+let obstacles=[], particles=[];
+let best=0;
+
+try{best=Number(localStorage.getItem("rodyGoudaBest")||0)}catch(e){}
+bestEl.textContent="BEST "+String(best).padStart(5,"0");
+
+const stages=[
+ {name:"WORLD 01 · GREEN DREAM",sky:"#b7e5dc",sun:"#fff3c4",far:"#8bc7b7",near:"#5e9d91",ground:"#334d4a",top:"#83c6a5",line:"#b2e6bf",night:false},
+ {name:"WORLD 02 · STARLIGHT",sky:"#202641",sun:"#f3d4bb",far:"#414d70",near:"#303b5a",ground:"#1c263c",top:"#677da2",line:"#a6c5ec",night:true},
+ {name:"WORLD 03 · FROZEN PEAKS",sky:"#b6dced",sun:"#ffffff",far:"#8ab6d0",near:"#648fae",ground:"#536e88",top:"#e5f7ff",line:"#b8e5fa",night:false},
+ {name:"WORLD 04 · COTTON SKY",sky:"#eebbd0",sun:"#fff0d1",far:"#d9a2c4",near:"#a777aa",ground:"#554368",top:"#c7a0cf",line:"#f0c7e1",night:false},
+ {name:"WORLD 05 · LAST SUNSET",sky:"#f3a27f",sun:"#ffe1a2",far:"#c77791",near:"#865c83",ground:"#34304b",top:"#df8b9b",line:"#ffc5bc",night:false},
+ {name:"WORLD 06 · OUR WORLD",sky:"#191e39",sun:"#ffd0e6",far:"#41476d",near:"#292e50",ground:"#171d32",top:"#e58eb8",line:"#ffbad9",night:true}
 ];
 
-let levelIndex = 0;
-let level;
-let platforms = [];
-let hearts = [];
-let decorations = [];
-let collected = 0;
-let cameraX = 0;
-let running = false;
-let gameEnded = false;
-let lastTime = 0;
-let elapsed = 0;
-let activeMessage = false;
-let checkpointMessage = false;
+function stageNumber(){return Math.min(5,Math.floor(score/350))}
+function currentStage(){return stages[stageNumber()]}
 
-const keys = {
-  left: false,
-  right: false
-};
+const rody={x:235,y:GROUND-58,vy:0,w:38,h:58,grounded:true};
+const gouda={x:145};
 
-const player = {
-  x: 24,
-  y: 120,
-  w: 8,
-  h: 12,
-  vx: 0,
-  vy: 0,
-  speed: 1.35,
-  jump: -4.5,
-  grounded: false,
-  facing: 1,
-  walk: 0
-};
-
-const friend = {
-  x: 12,
-  y: 120,
-  w: 8,
-  h: 12,
-  walk: 0
-};
-
-function platform(x, y, w, h = 8) {
-  return {x, y, w, h};
+function jump(){
+ if(state==="ready"){startGame();return}
+ if(state==="over"){return}
+ if(state==="playing"&&rody.grounded){
+   rody.vy=-15.5;
+   rody.grounded=false;
+   burst(rody.x+15,GROUND-4,"#ff9bc6",5);
+ }
 }
 
-function buildLevel() {
-  level = levels[levelIndex];
-
-  platforms = [
-    platform(0, FLOOR, 120),
-    platform(155, FLOOR - 14, 58),
-    platform(245, FLOOR - 29, 52),
-    platform(325, FLOOR - 10, 65),
-    platform(420, FLOOR - 25, 54),
-    platform(505, FLOOR - 8, 115)
-  ];
-
-  if (levelIndex === 1) {
-    platforms = [
-      platform(0, FLOOR, 100),
-      platform(126, 130, 48),
-      platform(197, 111, 45),
-      platform(270, 132, 55),
-      platform(354, 106, 48),
-      platform(430, 126, 54),
-      platform(510, FLOOR, 110),
-      platform(640, 124, 80)
-    ];
-  }
-
-  if (levelIndex === 2) {
-    platforms = [
-      platform(0, FLOOR, 90),
-      platform(115, 132, 45),
-      platform(181, 111, 48),
-      platform(252, 91, 45),
-      platform(320, 121, 48),
-      platform(393, 103, 48),
-      platform(465, 127, 48),
-      platform(535, FLOOR, 90),
-      platform(655, 124, 105)
-    ];
-  }
-
-  if (levelIndex === 3) {
-    platforms = [
-      platform(0, FLOOR, 105),
-      platform(130, 133, 52),
-      platform(210, 112, 48),
-      platform(285, 128, 52),
-      platform(365, 96, 48),
-      platform(440, 120, 50),
-      platform(520, 102, 60),
-      platform(615, FLOOR, 165)
-    ];
-  }
-
-  if (levelIndex === 4) {
-    platforms = [
-      platform(0, FLOOR, 100),
-      platform(124, 133, 52),
-      platform(200, 113, 52),
-      platform(278, 132, 52),
-      platform(355, 99, 55),
-      platform(437, 121, 52),
-      platform(515, 100, 52),
-      platform(598, 125, 60),
-      platform(685, FLOOR, 165)
-    ];
-  }
-
-  if (levelIndex === 5) {
-    platforms = [
-      platform(0, FLOOR, 110),
-      platform(140, 131, 55),
-      platform(220, 110, 55),
-      platform(300, 130, 55),
-      platform(380, 106, 55),
-      platform(460, 126, 55),
-      platform(540, FLOOR, 110)
-    ];
-  }
-
-  hearts = [];
-  let heartPositions = [];
-
-  for (let i = 0; i < platforms.length - 1; i++) {
-    const p = platforms[i];
-
-    if (i % 2 === 0 || i === 1) {
-      heartPositions.push({
-        x: p.x + p.w * 0.65,
-        y: p.y - 14
-      });
-    }
-  }
-
-  heartPositions.push({
-    x: level.length - 70,
-    y: FLOOR - 23
-  });
-
-  heartPositions.forEach((h, i) => {
-    hearts.push({
-      x: h.x,
-      y: h.y,
-      collected: false,
-      phase: i * 1.5
-    });
-  });
-
-  decorations = [];
-
-  for (let i = 0; i < level.length; i += 30) {
-    decorations.push({
-      x: i,
-      y: 10 + ((i * 7) % 40),
-      size: 2 + (i % 3)
-    });
-  }
-
-  player.x = 24;
-  player.y = 120;
-  player.vx = 0;
-  player.vy = 0;
-  player.grounded = false;
-
-  friend.x = 12;
-  friend.y = 120;
-
-  cameraX = 0;
-  checkpointMessage = false;
-
-  document.getElementById("levelName").textContent = level.name;
-  updateHearts();
+function startGame(){
+ state="playing";
+ elapsed=0;distance=0;score=0;speed=7;spawnTimer=45;
+ groundOffset=0;sceneryOffset=0;
+ obstacles=[];particles=[];
+ rody.y=GROUND-rody.h;rody.vy=0;rody.grounded=true;
+ overlay.style.display="none";
+ updateHUD();
+ last=performance.now();
+ requestAnimationFrame(loop);
 }
 
-function startGame() {
-  levelIndex = 0;
-  collected = 0;
-  gameEnded = false;
-  activeMessage = false;
-  document.getElementById("overlay").style.display = "none";
-  document.getElementById("message").style.display = "none";
-
-  buildLevel();
-  running = true;
-  lastTime = performance.now();
-  requestAnimationFrame(loop);
+function endGame(){
+ if(state!=="playing")return;
+ state="over";
+ if(score>best){
+   best=score;
+   try{localStorage.setItem("rodyGoudaBest",best)}catch(e){}
+ }
+ bestEl.textContent="BEST "+String(best).padStart(5,"0");
+ description.innerHTML=
+   "السكور بتاعك <b style='color:#ff9bc6'>"+score+"</b><br>"+
+   "كل مره هتلعبي هتقدري توصلي ابعد<br>"+
+   "Gouda كان بيجري وراكي طول الطريق ❤️";
+ mainBtn.textContent="العبي تاني";
+ overlay.style.display="flex";
 }
 
-function updateHearts() {
-  document.getElementById("heartCount").textContent = collected;
+function updateHUD(){
+ scoreEl.textContent=String(score).padStart(5,"0");
+ stageEl.textContent=currentStage().name;
 }
 
-function showMessage(text, buttonText = "نكمل؟") {
-  activeMessage = true;
-  keys.left = false;
-  keys.right = false;
-  document.getElementById("messageText").textContent = text;
-  document.getElementById("messageBtn").textContent = buttonText;
-  document.getElementById("message").style.display = "block";
+function rand(a,b){return a+Math.random()*(b-a)}
+
+function spawnObstacle(){
+ const roll=Math.random();
+ let type="cactus";
+ if(roll>.76&&score>100)type="bird";
+
+ if(type==="cactus"){
+   const tall=Math.random()>.5;
+   obstacles.push({
+     type,x:W+30,
+     y:GROUND-(tall?67:46),
+     w:tall?30:23,h:tall?67:46,
+     color:Math.random()>.5?"#315f4c":"#47765b"
+   });
+ }else{
+   obstacles.push({
+     type,x:W+30,y:GROUND-rand(62,94),
+     w:48,h:28,phase:rand(0,6)
+   });
+ }
 }
 
-function closeMessage() {
-  activeMessage = false;
-  document.getElementById("message").style.display = "none";
-
-  if (gameEnded) {
-    document.getElementById("overlay").style.display = "flex";
-    document.getElementById("overlayTitle").textContent = "Rody & Gouda";
-    document.getElementById("overlayText").textContent =
-      "شكرا يا Rody انك كملتي المغامره للاخر ♥";
-    document.getElementById("startBtn").textContent = "نلعب من الاول";
-    running = false;
-    return;
-  }
-
-  if (checkpointMessage) {
-    checkpointMessage = false;
-    nextLevel();
-  }
+function burst(x,y,color,n){
+ for(let i=0;i<n;i++){
+   particles.push({x,y,vx:rand(-3,3),vy:rand(-4,1),life:rand(15,28),color,size:rand(3,6)});
+ }
 }
 
-function nextLevel() {
-  if (levelIndex >= levels.length - 1) {
-    finishGame();
-    return;
-  }
+function update(dt){
+ const f=dt/16.667;
+ elapsed+=dt;
+ distance+=speed*f;
+ groundOffset=(groundOffset+speed*f)%70;
+ sceneryOffset=(sceneryOffset+speed*.25*f)%960;
 
-  levelIndex++;
-  buildLevel();
+ speed=Math.min(13.5,7+score*.003);
+ score=Math.floor(distance/10);
+ updateHUD();
+
+ rody.vy+=.72*f;
+ rody.y+=rody.vy*f;
+
+ if(rody.y>=GROUND-rody.h){
+   rody.y=GROUND-rody.h;
+   rody.vy=0;
+   rody.grounded=true;
+ }
+
+ spawnTimer-=f;
+ if(spawnTimer<=0){
+   spawnObstacle();
+   spawnTimer=rand(49,79)*(7/speed);
+ }
+
+ for(const o of obstacles){
+   o.x-=speed*f;
+   if(o.type==="bird")o.phase+=.2*f;
+ }
+
+ obstacles=obstacles.filter(o=>o.x+o.w>-20);
+
+ // Both characters share the exact same jump timing
+ for(const o of obstacles){
+   const hitX1=rody.x+27>o.x+4&&rody.x+8<o.x+o.w-4;
+   const hitY1=rody.y+rody.h-5>o.y+4&&rody.y+5<o.y+o.h-2;
+   const gx=rody.x-90;
+   const hitX2=gx+27>o.x+4&&gx+8<o.x+o.w-4;
+   const hitY2=rody.y+rody.h-5>o.y+4&&rody.y+5<o.y+o.h-2;
+   if((hitX1&&hitY1)||(hitX2&&hitY2)){
+     endGame();
+     return;
+   }
+ }
+
+ for(const p of particles){
+   p.x+=p.vx*f;p.y+=p.vy*f;p.vy+=.15*f;p.life-=f;
+ }
+ particles=particles.filter(p=>p.life>0);
 }
 
-function finishGame() {
-  running = false;
-  gameEnded = true;
-
-  showMessage(
-    "يا Rody ❤️ وصلنا للنهايه بس في حاجات كتير حلوه لسه قدامنا. انتي شخص مميز واتمني دايما تلاقي اسباب تضحكي وتكوني مبسوطه. من Gouda ليكي بكل حب",
-    "اقري النهايه"
-  );
+function rect(x,y,w,h,c){
+ ctx.fillStyle=c;
+ ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
 }
 
-function drawRect(x, y, w, h, color) {
-  ctx.fillStyle = color;
-  ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+function drawBackground(){
+ const s=currentStage();
+ rect(0,0,W,H,s.sky);
+
+ // Sun or moon
+ rect(760,90,66,66,s.sun);
+ rect(770,80,46,8,s.sun);
+ rect(750,105,8,36,s.sun);
+
+ // Stars
+ if(s.night){
+   for(let i=0;i<42;i++){
+     let x=(i*137-sceneryOffset*.25+W*3)%W;
+     let y=25+(i*71%240);
+     rect(x,y,3,3,i%4===0?"#ffe1ee":"#ffffffb0");
+   }
+ }
+
+ // Pixel hills
+ for(let i=0;i<8;i++){
+   let x=i*165-(sceneryOffset*.4%165);
+   rect(x,285,120,130,s.far);
+   rect(x+20,260,85,25,s.far);
+   rect(x+40,235,40,25,s.far);
+   rect(x+5,315,145,105,s.near);
+   rect(x+28,290,90,25,s.near);
+   rect(x+53,270,45,20,s.near);
+ }
+
+ // Trees, snowy pines or city buildings
+ for(let i=0;i<14;i++){
+   let x=(i*83-sceneryOffset+W*4)%W;
+   if(stageNumber()===2){
+     rect(x+10,310,6,100,"#54718b");
+     rect(x,280,26,30,"#e8f7ff");
+     rect(x+4,260,18,25,"#e8f7ff");
+     rect(x+8,244,10,18,"#e8f7ff");
+   }else if(stageNumber()===4){
+     let bh=65+(i*37%95);
+     rect(x,GROUND-bh,38,bh,s.near);
+     rect(x+6,GROUND-bh+12,5,7,"#ffe0a2");
+     rect(x+20,GROUND-bh+28,5,7,"#ffe0a2");
+     rect(x+6,GROUND-bh+43,5,7,"#ffe0a2");
+   }else if(stageNumber()===0||stageNumber()===1){
+     rect(x+11,330,10,90,"#55473f");
+     rect(x+2,300,29,30,s.near);
+     rect(x+6,280,21,20,s.near);
+     rect(x+11,265,11,15,s.near);
+   }else{
+     rect(x,335,38,85,s.near);
+     rect(x+7,310,24,25,s.near);
+     rect(x+13,292,12,18,s.near);
+   }
+ }
+
+ // Ground
+ rect(0,GROUND,W,H-GROUND,s.ground);
+ rect(0,GROUND,W,7,s.top);
+
+ for(let x=-70;x<W+70;x+=70){
+   let xx=x-groundOffset;
+   rect(xx,GROUND+22,35,4,s.line);
+   rect(xx+39,GROUND+40,9,4,s.line);
+ }
 }
 
-function drawHeart(x, y, size, color) {
-  drawRect(x, y + size, size * 3, size, color);
-  drawRect(x + size, y, size, size * 3, color);
-  drawRect(x + size * 2, y, size, size * 3, color);
-  drawRect(x + size * 3, y + size, size, size, color);
-  drawRect(x + size, y + size * 2, size * 2, size, color);
-  drawRect(x + size, y + size * 3, size, size, color);
+function drawRody(x,y,frame){
+ // shadow
+ rect(x-3,GROUND-3,45,5,"#14182755");
+
+ // Hair silhouette
+ rect(x+8,y+2,24,17,"#38283f");
+ rect(x+4,y+8,8,18,"#38283f");
+ rect(x+25,y+8,11,21,"#38283f");
+ rect(x+10,y+3,8,5,"#55405a");
+
+ // Face
+ rect(x+11,y+13,20,17,"#f2c5a7");
+ rect(x+28,y+18,4,5,"#f2c5a7");
+ rect(x+25,y+18,3,3,"#38283f");
+ rect(x+14,y+19,3,3,"#38283f");
+ rect(x+13,y+26,12,3,"#dc8e91");
+
+ // Pink hair ribbon
+ rect(x+5,y+6,8,5,"#ff8fbe");
+ rect(x+4,y+4,4,4,"#ffc2dd");
+
+ // Shirt
+ rect(x+8,y+31,25,16,"#f08ab8");
+ rect(x+12,y+32,15,4,"#ffb9d5");
+ rect(x+4,y+35,6,12,"#f2c5a7");
+ rect(x+31,y+35,6,12,"#f2c5a7");
+
+ // Legs
+ if(rody.grounded){
+   const step=Math.sin(elapsed*.018);
+   if(Math.abs(step)>.2){
+     rect(x+10,y+46,8,8,"#66578d");
+     rect(x+23,y+46,8,8,"#66578d");
+     rect(x+(step>0?8:13),y+52,11,5,"#f6f2ff");
+     rect(x+(step>0?22:27),y+52,11,5,"#f6f2ff");
+   }else{
+     rect(x+11,y+46,8,9,"#66578d");
+     rect(x+23,y+46,8,9,"#66578d");
+     rect(x+8,y+53,12,5,"#f6f2ff");
+     rect(x+22,y+53,12,5,"#f6f2ff");
+   }
+ }else{
+   rect(x+10,y+46,9,7,"#66578d");
+   rect(x+24,y+45,9,7,"#66578d");
+   rect(x+8,y+51,11,5,"#f6f2ff");
+   rect(x+24,y+50,11,5,"#f6f2ff");
+ }
 }
 
-function drawCharacter(x, y, type, walk = 0, facing = 1) {
-  const bob = Math.sin(walk) * 0.5;
-  const px = Math.round(x);
-  const py = Math.round(y + bob);
+function drawGouda(x,y){
+ // Same pose and same jump height as Rody
+ rect(x-2,GROUND-3,45,5,"#14182755");
 
-  const isRody = type === "rody";
-  const hair = isRody ? "#38243f" : "#29253a";
-  const skin = isRody ? "#f4c7a9" : "#e5b28f";
-  const shirt = isRody ? "#ff8fbc" : "#65b9ed";
-  const pants = isRody ? "#594e80" : "#394e7e";
-  const shoes = "#28283d";
+ // Hair
+ rect(x+8,y+2,24,17,"#28263b");
+ rect(x+5,y+7,8,15,"#28263b");
+ rect(x+27,y+6,7,10,"#28263b");
 
-  // Hair
-  drawRect(px + 1, py, 6, 3, hair);
-  drawRect(px, py + 2, 2, 3, hair);
+ // Face
+ rect(x+11,y+13,20,17,"#dba986");
+ rect(x+14,y+18,3,3,"#252238");
+ rect(x+25,y+18,3,3,"#252238");
+ rect(x+18,y+25,9,2,"#945b5e");
 
-  if (isRody) {
-    drawRect(px + 6, py + 2, 2, 4, hair);
-    drawRect(px + 1, py + 1, 2, 2, "#ff9fc7");
-  }
+ // Blue shirt
+ rect(x+8,y+31,25,16,"#63b7e9");
+ rect(x+12,y+33,16,4,"#a4ddf7");
+ rect(x+4,y+35,6,12,"#dba986");
+ rect(x+31,y+35,6,12,"#dba986");
 
-  // Face
-  drawRect(px + 2, py + 3, 5, 4, skin);
-
-  if (facing >= 0) {
-    drawRect(px + 5, py + 4, 1, 1, "#33233a");
-  } else {
-    drawRect(px + 2, py + 4, 1, 1, "#33233a");
-  }
-
-  // Body
-  drawRect(px + 1, py + 7, 6, 3, shirt);
-  drawRect(px + 1, py + 10, 2, 2, pants);
-  drawRect(px + 5, py + 10, 2, 2, pants);
-
-  if (Math.abs(player.vx) > 0.1 && isRody) {
-    if (Math.sin(walk) > 0) {
-      drawRect(px, py + 11, 3, 1, shoes);
-      drawRect(px + 5, py + 10, 3, 1, shoes);
-    } else {
-      drawRect(px + 1, py + 10, 3, 1, shoes);
-      drawRect(px + 5, py + 11, 3, 1, shoes);
-    }
-  } else {
-    drawRect(px, py + 11, 3, 1, shoes);
-    drawRect(px + 5, py + 11, 3, 1, shoes);
-  }
+ // Legs follow Rody's exact pose
+ if(rody.grounded){
+   const step=Math.sin(elapsed*.018);
+   rect(x+10,y+46,8,8,"#394d7d");
+   rect(x+23,y+46,8,8,"#394d7d");
+   rect(x+(step>.2?8:13),y+52,11,5,"#fff");
+   rect(x+(step>.2?22:27),y+52,11,5,"#fff");
+ }else{
+   rect(x+10,y+46,9,7,"#394d7d");
+   rect(x+24,y+45,9,7,"#394d7d");
+   rect(x+8,y+51,11,5,"#fff");
+   rect(x+24,y+50,11,5,"#fff");
+ }
 }
 
-function drawBackground() {
-  drawRect(0, 0, W, H, level.sky);
-
-  // Distant scenery
-  for (let i = 0; i < 8; i++) {
-    const x = i * 55 - (cameraX * 0.18 % 55);
-
-    if (level.type === 2) {
-      drawRect(x, 55, 28, 50, level.far);
-      drawRect(x + 12, 35, 22, 70, level.far);
-      drawRect(x + 15, 40, 5, 7, "#f4fcff");
-      drawRect(x + 23, 51, 6, 6, "#f4fcff");
-    } else if (level.type === 4) {
-      drawRect(x, 65, 28, 50, level.far);
-      drawRect(x + 4, 50, 20, 65, level.far);
-      drawRect(x + 7, 58, 3, 5, "#ffd5a0");
-      drawRect(x + 17, 70, 3, 5, "#ffd5a0");
-    } else if (level.type === 3) {
-      drawRect(x + 8, 45, 24, 10, "#f9e2ef");
-      drawRect(x + 3, 50, 34, 8, "#f9e2ef");
-    } else {
-      drawRect(x + 8, 76, 20, 35, level.far);
-      drawRect(x + 2, 65, 32, 25, level.far);
-      drawRect(x + 8, 55, 18, 22, level.far);
-    }
-  }
-
-  if (level.type === 1 || level.type === 5) {
-    for (let i = 0; i < 22; i++) {
-      const x = (i * 47 - cameraX * 0.25 % 320 + 320) % 320;
-      const y = 18 + (i * 29 % 48);
-      drawRect(x, y, 2, 2, "#fff1c9");
-      if (i % 3 === 0) {
-        drawRect(x + 3, y, 1, 1, "#fff1c9");
-      }
-    }
-  }
-
-  if (level.type === 0 || level.type === 1) {
-    for (let i = 0; i < 10; i++) {
-      const x = (i * 43 - cameraX * 0.45 % 320 + 320) % 320;
-      drawRect(x, 95, 5, 42, level.ground);
-      drawRect(x - 5, 86, 15, 12, level.ground);
-      drawRect(x - 2, 78, 9, 12, level.ground);
-    }
-  }
-
-  if (level.type === 4) {
-    drawRect(0, 120, W, 5, "#e9919a");
-    drawRect(0, 127, W, 2, "#e9919a");
-  }
+function drawCactus(o){
+ const x=o.x,y=o.y;
+ rect(x+8,y,12,o.h,o.color);
+ rect(x+2,y+15,8,7,o.color);
+ rect(x+2,y+15,5,17,o.color);
+ rect(x+19,y+26,8,7,o.color);
+ rect(x+22,y+26,5,16,o.color);
+ rect(x+10,y+4,3,5,"#81b68b");
 }
 
-function drawPlatforms() {
-  for (const p of platforms) {
-    const x = p.x - cameraX;
-
-    if (x + p.w < -5 || x > W + 5) continue;
-
-    drawRect(x, p.y, p.w, p.h + 40, level.ground);
-    drawRect(x, p.y, p.w, 3, level.top);
-
-    for (let i = 5; i < p.w; i += 12) {
-      drawRect(x + i, p.y + 6, 2, 2, level.platform);
-    }
-  }
+function drawBird(o){
+ const flap=Math.sin(o.phase)>0?0:8;
+ rect(o.x+12,o.y+9,24,12,"#453951");
+ rect(o.x+28,o.y+4,12,11,"#453951");
+ rect(o.x+37,o.y+8,9,4,"#eeb9bd");
+ rect(o.x+7,o.y+flap,19,5,"#66516f");
+ rect(o.x+3,o.y+flap-3,9,5,"#66516f");
+ rect(o.x+18,o.y+20,5,5,"#453951");
 }
 
-function drawHearts() {
-  hearts.forEach(h => {
-    if (h.collected) return;
+function draw(){
+ drawBackground();
 
-    const x = h.x - cameraX;
-    const y = h.y + Math.sin(elapsed * 0.004 + h.phase) * 2;
+ for(const o of obstacles){
+   if(o.type==="bird")drawBird(o);
+   else drawCactus(o);
+ }
 
-    if (x < -10 || x > W + 10) return;
+ for(const p of particles){
+   rect(p.x,p.y,p.size,p.size,p.color);
+ }
 
-    drawHeart(x, y, 2, "#ff639f");
-    drawRect(x + 2, y + 2, 2, 2, "#ffd1e4");
-  });
+ // Gouda mirrors Rody exactly, only positioned behind her
+ drawGouda(rody.x-90,rody.y);
+ drawRody(rody.x,rody.y);
+
+ // Small name tags
+ ctx.font="bold 12px monospace";
+ ctx.textAlign="center";
+ ctx.fillStyle="#fff";
+ ctx.fillText("GOUDA",rody.x-68,rody.y-13);
+ ctx.fillStyle="#ffb5d3";
+ ctx.fillText("RODY",rody.x+18,rody.y-13);
 }
 
-function drawExit() {
-  const x = level.length - 28 - cameraX;
+function loop(now){
+ if(state!=="playing")return;
 
-  if (x < -30 || x > W + 20) return;
+ const dt=Math.min(now-last||16.667,32);
+ last=now;
 
-  drawRect(x, FLOOR - 25, 20, 25, "#54305f");
-  drawRect(x + 3, FLOOR - 22, 14, 22, "#ff9fcb");
-  drawRect(x + 6, FLOOR - 18, 8, 13, "#ffd6e6");
-  drawHeart(x + 7, FLOOR - 30, 2, "#ff639f");
+ update(dt);
+ draw();
+
+ if(state==="playing")requestAnimationFrame(loop);
 }
 
-function movePlayer(dt) {
-  if (!running || activeMessage) return;
-
-  const frame = Math.min(dt / 16.67, 2);
-
-  player.vx = 0;
-
-  if (keys.left) {
-    player.vx = -player.speed;
-    player.facing = -1;
-  }
-
-  if (keys.right) {
-    player.vx = player.speed;
-    player.facing = 1;
-  }
-
-  player.x += player.vx * frame;
-  player.walk += Math.abs(player.vx) * frame * 0.2;
-
-  player.vy += 0.19 * frame;
-  if (player.vy > 4.5) player.vy = 4.5;
-
-  const previousBottom = player.y + player.h;
-  player.y += player.vy * frame;
-  player.grounded = false;
-
-  for (const p of platforms) {
-    const overlapX =
-      player.x + player.w > p.x &&
-      player.x < p.x + p.w;
-
-    const currentBottom = player.y + player.h;
-
-    if (
-      overlapX &&
-      player.vy >= 0 &&
-      previousBottom <= p.y + 1 &&
-      currentBottom >= p.y
-    ) {
-      player.y = p.y - player.h;
-      player.vy = 0;
-      player.grounded = true;
-    }
-  }
-
-  if (player.x < 0) player.x = 0;
-
-  // Falling returns Rody to the beginning of the stage
-  if (player.y > H + 15) {
-    player.x = Math.max(15, cameraX + 15);
-    player.y = 90;
-    player.vy = 0;
-  }
-
-  // Gouda follows Rody
-  const targetX = player.x - 14;
-
-  if (friend.x < targetX) {
-    friend.x += Math.min(1.05 * frame, targetX - friend.x);
-  } else if (friend.x > targetX + 3) {
-    friend.x -= Math.min(1.05 * frame, friend.x - targetX - 3);
-  }
-
-  friend.y += (player.y - friend.y) * 0.12 * frame;
-  friend.walk += Math.abs(player.vx) * frame * 0.2;
-
-  // Camera
-  cameraX = Math.max(0, player.x - 105);
-  cameraX = Math.min(cameraX, level.length - W);
-
-  // Collect hearts
-  hearts.forEach(h => {
-    if (h.collected) return;
-
-    const dx = player.x + player.w / 2 - h.x;
-    const dy = player.y + player.h / 2 - h.y;
-
-    if (Math.abs(dx) < 10 && Math.abs(dy) < 13) {
-      h.collected = true;
-      collected++;
-      updateHearts();
-
-      showMessage("جميل يا Rody جمعتي قلب جديد ♥ كملي المغامره وشوفي ايه مستنيكي");
-    }
-  });
-
-  // Reach exit
-  if (
-    player.x + player.w >= level.length - 35 &&
-    !checkpointMessage
-  ) {
-    checkpointMessage = true;
-
-    if (levelIndex === levels.length - 1) {
-      finishGame();
-    } else {
-      showMessage(level.message, "المرحله اللي بعدها");
-    }
-  }
-}
-
-function render() {
-  drawBackground();
-  drawPlatforms();
-  drawHearts();
-  drawExit();
-
-  // Draw Gouda behind Rody
-  drawCharacter(
-    friend.x - cameraX,
-    friend.y,
-    "gouda",
-    friend.walk,
-    player.facing
-  );
-
-  drawCharacter(
-    player.x - cameraX,
-    player.y,
-    "rody",
-    player.walk,
-    player.facing
-  );
-
-  if (!activeMessage && running && elapsed < 4500) {
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "6px monospace";
-    ctx.fillText("RODY", player.x - cameraX - 2, player.y - 5);
-    ctx.fillText("GOUDA", friend.x - cameraX - 5, friend.y - 5);
-  }
-}
-
-function loop(now) {
-  if (!running) return;
-
-  const dt = Math.min(now - lastTime, 32);
-  lastTime = now;
-  elapsed += dt;
-
-  movePlayer(dt);
-  render();
-
-  requestAnimationFrame(loop);
-}
-
-// Keyboard controls
-document.addEventListener("keydown", e => {
-  if (
-    ["ArrowLeft", "ArrowRight", "ArrowUp", "Space", " "].includes(e.code)
-  ) {
-    e.preventDefault();
-  }
-
-  if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = true;
-  if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = true;
-
-  if (
-    (e.code === "ArrowUp" || e.code === "Space" || e.code === "KeyW") &&
-    player.grounded &&
-    running &&
-    !activeMessage
-  ) {
-    player.vy = player.jump;
-    player.grounded = false;
-  }
+mainBtn.addEventListener("click",()=>{
+ if(state==="over"){
+   startGame();
+ }else{
+   startGame();
+ }
 });
 
-document.addEventListener("keyup", e => {
-  if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = false;
-  if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = false;
+window.addEventListener("keydown",e=>{
+ if(["Space","ArrowUp","ArrowDown"].includes(e.code))e.preventDefault();
+
+ if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW"){
+   if(!e.repeat)jump();
+ }
 });
 
-function bindButton(id, onDown, onUp) {
-  const el = document.getElementById(id);
+canvas.addEventListener("pointerdown",e=>{
+ if(state==="playing")jump();
+});
 
-  el.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    el.setPointerCapture(e.pointerId);
-    onDown();
-  });
+document.getElementById("mobileJump").addEventListener("pointerdown",e=>{
+ e.preventDefault();
+ jump();
+});
 
-  el.addEventListener("pointerup", e => {
-    e.preventDefault();
-    onUp();
-  });
-
-  el.addEventListener("pointercancel", onUp);
-  el.addEventListener("lostpointercapture", onUp);
+function preview(){
+ drawBackground();
+ drawGouda(rody.x-90,rody.y);
+ drawRody(rody.x,rody.y);
+ drawCactus({x:700,y:GROUND-55,w:25,h:55,color:"#315f4c"});
 }
-
-bindButton("left", () => keys.left = true, () => keys.left = false);
-bindButton("right", () => keys.right = true, () => keys.right = false);
-
-document.getElementById("jump").addEventListener("pointerdown", e => {
-  e.preventDefault();
-
-  if (player.grounded && running && !activeMessage) {
-    player.vy = player.jump;
-    player.grounded = false;
-  }
-});
-
-document.getElementById("jump").addEventListener("contextmenu", e => {
-  e.preventDefault();
-});
-
-// Stop movement when the tab loses focus
-window.addEventListener("blur", () => {
-  keys.left = false;
-  keys.right = false;
-});
-
-// Initial preview
-level = levels[0];
-buildLevel();
-render();
+preview();
 </script>
 </body>
 </html>
