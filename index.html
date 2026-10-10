@@ -69,18 +69,18 @@ footer span{font-size:11px;color:#858691}
  <canvas id="game" width="800" height="400"></canvas>
  <div id="overlay">
   <div class="panel">
-   <div class="avatar">🌷</div>
+   <div class="avatar"></div>
    <h1 id="title">Rody <span>&</span> Gouda</h1>
-   <p id="desc">مغامره صغيره لينا<br>اجري واقفزي وعدي العقبات<br>Gouda هيفضل يجري معاكي طول الطريق</p>
-   <button id="start">ابدأي اللعب</button>
-   <div class="hint">اضغطي Space او المسّي الشاشه للقفز</div>
+   <p id="desc"><br>ا<br>هو انتي كل شويه هتخسري</p>
+   <button id="start">الاستارت اهو</button>
+   <div class="hint"></div>
   </div>
  </div>
 </div>
 
 <footer>
- <span id="best">افضل نتيجه 00000</span>
- <button id="jumpBtn">اقفزي ↑</button>
+ <span id="best">اسكورك اهو بردو 00000</span>
+ <button id="jumpBtn">jump</button>
 </footer>
 </main>
 
@@ -317,10 +317,10 @@ function finish(){
   try{localStorage.setItem("rg-best",String(best))}catch(e){}
  }
 
- bestEl.textContent="افضل نتيجه "+String(best).padStart(5,"0");
- title.innerHTML="حاول تاني <span>♥</span>";
- desc.innerHTML="وصلت ل "+score+" نقطه<br>Gouda كان بيجري معاكي طول الطريق<br>جاهزه تحققي نتيجه اعلى؟";
- startBtn.textContent="العبي من جديد";
+ bestEl.textContent=""+String(best).padStart(5,"0");
+ title.innerHTML=" <span>♥</span>";
+ desc.innerHTML=" "+score+" <br><br>";
+ startBtn.textContent="جربي تاني انت كد كدا هتخسري";
  overlay.style.display="flex";
 }
 
