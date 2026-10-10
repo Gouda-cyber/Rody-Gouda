@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rody & Gouda</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: #111322;
+  color: white;
+  font-family: Tahoma, Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+#gameBox {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111322;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  max-height: 100dvh;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#hud {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  font-size: 12px;
+  text-shadow: 2px 2px #222;
+}
+
+.pill {
+  padding: 8px 11px;
+  border: 2px solid #ffffff50;
+  border-radius: 7px;
+  background: #17172cbb;
+}
+
+#message {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 400px);
+  padding: 12px;
+  background: #19182eeF;
+  border: 2px solid #ff91bd;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.9;
+  display: none;
+  z-index: 5;
+}
+
+#message button {
+  display: block;
+  margin: 8px auto 0;
+  padding: 7px 20px;
+  background: #ff91bd;
+  color: #241326;
+  border: 0;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+#controls {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  direction: ltr;
+  pointer-events: none;
+}
+
+.controlGroup {
+  display: flex;
+  gap: 10px;
+}
+
+.ctrl {
+  pointer-events: auto;
+  width: 57px;
+  height: 57px;
+  background: #22233cce;
+  color: white;
+  border: 2px solid #ffffff66;
+  border-radius: 12px;
+  font-size: 24px;
+  touch-action: none;
+}
+
+.ctrl:active {
+  background: #ff82b4;
+  color: #201329;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: #101022b9;
+  z-index: 10;
+}
+
+.panel {
+  width: min(100%, 390px);
+  padding: 25px 20px;
+  background: #1b1b35;
+  border: 2px solid #ff91bd;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 35px #ff82b430;
+}
+
+.pixelHeart {
+  color: #ff78b0;
+  font-size: 38px;
+  margin: 8px;
+}
+
+.panel h1 {
+  margin: 8px 0;
+  font-size: 27px;
+  color: #ff9cc5;
+}
+
+.panel p {
+  font-size: 13px;
+  line-height: 2;
+  color: #e1dced;
+}
+
+.mainBtn {
+  background: #ff91bd;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #21152a;
+  cursor: pointer;
+}
+
+#levelName {
+  color: #ffd2e4;
+}
+
+@media (min-width: 700px) {
+  #controls {
+    bottom: 18px;
+  }
+
+  .ctrl {
+    width: 64px;
+    height: 64px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div id="gameBox">
+
+  <canvas id="game" width="320" height="180"></canvas>
+
+  <div id="hud">
+    <div class="pill" id="levelName">الغابه الهادئه</div>
+    <div class="pill">♥ <span id="heartCount">0</span></div>
+  </div>
+
+  <div id="message">
+    <div id="messageText"></div>
+    <button id="messageBtn" onclick="closeMessage()">نكمل؟</button>
+  </div>
+
+  <div id="controls">
+    <div class="controlGroup">
+      <button class="ctrl" id="left">◀</button>
+      <button class="ctrl" id="right">▶</button>
+    </div>
+    <div class="controlGroup">
+      <button class="ctrl" id="jump">▲</button>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <div class="panel">
+      <div class="pixelHeart">♥</div>
+      <h1 id="overlayTitle">Rody & Gouda</h1>
+      <p id="overlayText">
+        مغامره صغيره معموله مخصوص ليكي<br>
+        امشي واجمعي القلوب وخليكي مع Gouda<br>
+        كل مرحله فيها حكايه صغيره مستنياكي
+      </p>
+      <button class="mainBtn" id="startBtn" onclick="startGame()">ابدأي المغامره</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+ctx.imageSmoothingEnabled = false;
+
+const W = 320;
+const H = 180;
+const FLOOR = 153;
+
+const levels = [
+  {
+    name: "الغابه الهادئه",
+    sky: "#9bd7cf",
+    far: "#619c91",
+    ground: "#376b4a",
+    top: "#70b96b",
+    platform: "#528c58",
+    type: 0,
+    length: 620,
+    message: "يا Rody دي اول خطوه في مغامرتنا واتمني كل خطوه فيها تكون سبب في ابتسامتك"
+  },
+  {
+    name: "غابه النجوم",
+    sky: "#292c58",
+    far: "#414775",
+    ground: "#252e48",
+    top: "#626b9b",
+    platform: "#454e7a",
+    type: 1,
+    length: 720,
+    message: "وسط كل النجوم دي في حاجه واحده مميزه بالنسبالي وهي اني اقدر اشاركك اللحظه دي"
+  },
+  {
+    name: "الجبل التلجي",
+    sky: "#b9e7f7",
+    far: "#82bbd8",
+    ground: "#688da8",
+    top: "#e8f8ff",
+    platform: "#a8d5e9",
+    type: 2,
+    length: 760,
+    message: "حتى لو الطريق صعب هنكمل خطوه خطوه والمهم اننا منستعجلش الوصول"
+  },
+  {
+    name: "طريق السحاب",
+    sky: "#f9c6d7",
+    far: "#d99cbe",
+    ground: "#765d91",
+    top: "#d8b1df",
+    platform: "#a983c2",
+    type: 3,
+    length: 780,
+    message: "في حاجات بسيطه بتخلي اليوم احلى زي ضحكه حلوه او رساله تيجي في وقتها"
+  },
+  {
+    name: "المدينه وقت الغروب",
+    sky: "#f6a078",
+    far: "#bd6b8b",
+    ground: "#49405f",
+    top: "#b97881",
+    platform: "#79506f",
+    type: 4,
+    length: 850,
+    message: "وصلنا بعيد يا Rody وكل قلب جمعناه بيفكرني ان اجمل الحاجات مش لازم تكون كبيره"
+  },
+  {
+    name: "مكاننا المميز",
+    sky: "#222849",
+    far: "#41466f",
+    ground: "#292c49",
+    top: "#e58cba",
+    platform: "#9b679e",
+    type: 5,
+    length: 650,
+    message: "دي اخر مرحله في اللعبه بس مش اخر ذكري حلوه ممكن نصنعها سوا"
+  }
+];
+
+let levelIndex = 0;
+let level;
+let platforms = [];
+let hearts = [];
+let decorations = [];
+let collected = 0;
+let cameraX = 0;
+let running = false;
+let gameEnded = false;
+let lastTime = 0;
+let elapsed = 0;
+let activeMessage = false;
+let checkpointMessage = false;
+
+const keys = {
+  left: false,
+  right: false
+};
+
+const player = {
+  x: 24,
+  y: 120,
+  w: 8,
+  h: 12,
+  vx: 0,
+  vy: 0,
+  speed: 1.35,
+  jump: -4.5,
+  grounded: false,
+  facing: 1,
+  walk: 0
+};
+
+const friend = {
+  x: 12,
+  y: 120,
+  w: 8,
+  h: 12,
+  walk: 0
+};
+
+function platform(x, y, w, h = 8) {
+  return {x, y, w, h};
+}
+
+function buildLevel() {
+  level = levels[levelIndex];
+
+  platforms = [
+    platform(0, FLOOR, 120),
+    platform(155, FLOOR - 14, 58),
+    platform(245, FLOOR - 29, 52),
+    platform(325, FLOOR - 10, 65),
+    platform(420, FLOOR - 25, 54),
+    platform(505, FLOOR - 8, 115)
+  ];
+
+  if (levelIndex === 1) {
+    platforms = [
+      platform(0, FLOOR, 100),
+      platform(126, 130, 48),
+      platform(197, 111, 45),
+      platform(270, 132, 55),
+      platform(354, 106, 48),
+      platform(430, 126, 54),
+      platform(510, FLOOR, 110),
+      platform(640, 124, 80)
+    ];
+  }
+
+  if (levelIndex === 2) {
+    platforms = [
+      platform(0, FLOOR, 90),
+      platform(115, 132, 45),
+      platform(181, 111, 48),
+      platform(252, 91, 45),
+      platform(320, 121, 48),
+      platform(393, 103, 48),
+      platform(465, 127, 48),
+      platform(535, FLOOR, 90),
+      platform(655, 124, 105)
+    ];
+  }
+
+  if (levelIndex === 3) {
+    platforms = [
+      platform(0, FLOOR, 105),
+      platform(130, 133, 52),
+      platform(210, 112, 48),
+      platform(285, 128, 52),
+      platform(365, 96, 48),
+      platform(440, 120, 50),
+      platform(520, 102, 60),
+      platform(615, FLOOR, 165)
+    ];
+  }
+
+  if (levelIndex === 4) {
+    platforms = [
+      platform(0, FLOOR, 100),
+      platform(124, 133, 52),
+      platform(200, 113, 52),
+      platform(278, 132, 52),
+      platform(355, 99, 55),
+      platform(437, 121, 52),
+      platform(515, 100, 52),
+      platform(598, 125, 60),
+      platform(685, FLOOR, 165)
+    ];
+  }
+
+  if (levelIndex === 5) {
+    platforms = [
+      platform(0, FLOOR, 110),
+      platform(140, 131, 55),
+      platform(220, 110, 55),
+      platform(300, 130, 55),
+      platform(380, 106, 55),
+      platform(460, 126, 55),
+      platform(540, FLOOR, 110)
+    ];
+  }
+
+  hearts = [];
+  let heartPositions = [];
+
+  for (let i = 0; i < platforms.length - 1; i++) {
+    const p = platforms[i];
+
+    if (i % 2 === 0 || i === 1) {
+      heartPositions.push({
+        x: p.x + p.w * 0.65,
+        y: p.y - 14
+      });
+    }
+  }
+
+  heartPositions.push({
+    x: level.length - 70,
+    y: FLOOR - 23
+  });
+
+  heartPositions.forEach((h, i) => {
+    hearts.push({
+      x: h.x,
+      y: h.y,
+      collected: false,
+      phase: i * 1.5
+    });
+  });
+
+  decorations = [];
+
+  for (let i = 0; i < level.length; i += 30) {
+    decorations.push({
+      x: i,
+      y: 10 + ((i * 7) % 40),
+      size: 2 + (i % 3)
+    });
+  }
+
+  player.x = 24;
+  player.y = 120;
+  player.vx = 0;
+  player.vy = 0;
+  player.grounded = false;
+
+  friend.x = 12;
+  friend.y = 120;
+
+  cameraX = 0;
+  checkpointMessage = false;
+
+  document.getElementById("levelName").textContent = level.name;
+  updateHearts();
+}
+
+function startGame() {
+  levelIndex = 0;
+  collected = 0;
+  gameEnded = false;
+  activeMessage = false;
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("message").style.display = "none";
+
+  buildLevel();
+  running = true;
+  lastTime = performance.now();
+  requestAnimationFrame(loop);
+}
+
+function updateHearts() {
+  document.getElementById("heartCount").textContent = collected;
+}
+
+function showMessage(text, buttonText = "نكمل؟") {
+  activeMessage = true;
+  keys.left = false;
+  keys.right = false;
+  document.getElementById("messageText").textContent = text;
+  document.getElementById("messageBtn").textContent = buttonText;
+  document.getElementById("message").style.display = "block";
+}
+
+function closeMessage() {
+  activeMessage = false;
+  document.getElementById("message").style.display = "none";
+
+  if (gameEnded) {
+    document.getElementById("overlay").style.display = "flex";
+    document.getElementById("overlayTitle").textContent = "Rody & Gouda";
+    document.getElementById("overlayText").textContent =
+      "شكرا يا Rody انك كملتي المغامره للاخر ♥";
+    document.getElementById("startBtn").textContent = "نلعب من الاول";
+    running = false;
+    return;
+  }
+
+  if (checkpointMessage) {
+    checkpointMessage = false;
+    nextLevel();
+  }
+}
+
+function nextLevel() {
+  if (levelIndex >= levels.length - 1) {
+    finishGame();
+    return;
+  }
+
+  levelIndex++;
+  buildLevel();
+}
+
+function finishGame() {
+  running = false;
+  gameEnded = true;
+
+  showMessage(
+    "يا Rody ❤️ وصلنا للنهايه بس في حاجات كتير حلوه لسه قدامنا. انتي شخص مميز واتمني دايما تلاقي اسباب تضحكي وتكوني مبسوطه. من Gouda ليكي بكل حب",
+    "اقري النهايه"
+  );
+}
+
+function drawRect(x, y, w, h, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+}
+
+function drawHeart(x, y, size, color) {
+  drawRect(x, y + size, size * 3, size, color);
+  drawRect(x + size, y, size, size * 3, color);
+  drawRect(x + size * 2, y, size, size * 3, color);
+  drawRect(x + size * 3, y + size, size, size, color);
+  drawRect(x + size, y + size * 2, size * 2, size, color);
+  drawRect(x + size, y + size * 3, size, size, color);
+}
+
+function drawCharacter(x, y, type, walk = 0, facing = 1) {
+  const bob = Math.sin(walk) * 0.5;
+  const px = Math.round(x);
+  const py = Math.round(y + bob);
+
+  const isRody = type === "rody";
+  const hair = isRody ? "#38243f" : "#29253a";
+  const skin = isRody ? "#f4c7a9" : "#e5b28f";
+  const shirt = isRody ? "#ff8fbc" : "#65b9ed";
+  const pants = isRody ? "#594e80" : "#394e7e";
+  const shoes = "#28283d";
+
+  // Hair
+  drawRect(px + 1, py, 6, 3, hair);
+  drawRect(px, py + 2, 2, 3, hair);
+
+  if (isRody) {
+    drawRect(px + 6, py + 2, 2, 4, hair);
+    drawRect(px + 1, py + 1, 2, 2, "#ff9fc7");
+  }
+
+  // Face
+  drawRect(px + 2, py + 3, 5, 4, skin);
+
+  if (facing >= 0) {
+    drawRect(px + 5, py + 4, 1, 1, "#33233a");
+  } else {
+    drawRect(px + 2, py + 4, 1, 1, "#33233a");
+  }
+
+  // Body
+  drawRect(px + 1, py + 7, 6, 3, shirt);
+  drawRect(px + 1, py + 10, 2, 2, pants);
+  drawRect(px + 5, py + 10, 2, 2, pants);
+
+  if (Math.abs(player.vx) > 0.1 && isRody) {
+    if (Math.sin(walk) > 0) {
+      drawRect(px, py + 11, 3, 1, shoes);
+      drawRect(px + 5, py + 10, 3, 1, shoes);
+    } else {
+      drawRect(px + 1, py + 10, 3, 1, shoes);
+      drawRect(px + 5, py + 11, 3, 1, shoes);
+    }
+  } else {
+    drawRect(px, py + 11, 3, 1, shoes);
+    drawRect(px + 5, py + 11, 3, 1, shoes);
+  }
+}
+
+function drawBackground() {
+  drawRect(0, 0, W, H, level.sky);
+
+  // Distant scenery
+  for (let i = 0; i < 8; i++) {
+    const x = i * 55 - (cameraX * 0.18 % 55);
+
+    if (level.type === 2) {
+      drawRect(x, 55, 28, 50, level.far);
+      drawRect(x + 12, 35, 22, 70, level.far);
+      drawRect(x + 15, 40, 5, 7, "#f4fcff");
+      drawRect(x + 23, 51, 6, 6, "#f4fcff");
+    } else if (level.type === 4) {
+      drawRect(x, 65, 28, 50, level.far);
+      drawRect(x + 4, 50, 20, 65, level.far);
+      drawRect(x + 7, 58, 3, 5, "#ffd5a0");
+      drawRect(x + 17, 70, 3, 5, "#ffd5a0");
+    } else if (level.type === 3) {
+      drawRect(x + 8, 45, 24, 10, "#f9e2ef");
+      drawRect(x + 3, 50, 34, 8, "#f9e2ef");
+    } else {
+      drawRect(x + 8, 76, 20, 35, level.far);
+      drawRect(x + 2, 65, 32, 25, level.far);
+      drawRect(x + 8, 55, 18, 22, level.far);
+    }
+  }
+
+  if (level.type === 1 || level.type === 5) {
+    for (let i = 0; i < 22; i++) {
+      const x = (i * 47 - cameraX * 0.25 % 320 + 320) % 320;
+      const y = 18 + (i * 29 % 48);
+      drawRect(x, y, 2, 2, "#fff1c9");
+      if (i % 3 === 0) {
+        drawRect(x + 3, y, 1, 1, "#fff1c9");
+      }
+    }
+  }
+
+  if (level.type === 0 || level.type === 1) {
+    for (let i = 0; i < 10; i++) {
+      const x = (i * 43 - cameraX * 0.45 % 320 + 320) % 320;
+      drawRect(x, 95, 5, 42, level.ground);
+      drawRect(x - 5, 86, 15, 12, level.ground);
+      drawRect(x - 2, 78, 9, 12, level.ground);
+    }
+  }
+
+  if (level.type === 4) {
+    drawRect(0, 120, W, 5, "#e9919a");
+    drawRect(0, 127, W, 2, "#e9919a");
+  }
+}
+
+function drawPlatforms() {
+  for (const p of platforms) {
+    const x = p.x - cameraX;
+
+    if (x + p.w < -5 || x > W + 5) continue;
+
+    drawRect(x, p.y, p.w, p.h + 40, level.ground);
+    drawRect(x, p.y, p.w, 3, level.top);
+
+    for (let i = 5; i < p.w; i += 12) {
+      drawRect(x + i, p.y + 6, 2, 2, level.platform);
+    }
+  }
+}
+
+function drawHearts() {
+  hearts.forEach(h => {
+    if (h.collected) return;
+
+    const x = h.x - cameraX;
+    const y = h.y + Math.sin(elapsed * 0.004 + h.phase) * 2;
+
+    if (x < -10 || x > W + 10) return;
+
+    drawHeart(x, y, 2, "#ff639f");
+    drawRect(x + 2, y + 2, 2, 2, "#ffd1e4");
+  });
+}
+
+function drawExit() {
+  const x = level.length - 28 - cameraX;
+
+  if (x < -30 || x > W + 20) return;
+
+  drawRect(x, FLOOR - 25, 20, 25, "#54305f");
+  drawRect(x + 3, FLOOR - 22, 14, 22, "#ff9fcb");
+  drawRect(x + 6, FLOOR - 18, 8, 13, "#ffd6e6");
+  drawHeart(x + 7, FLOOR - 30, 2, "#ff639f");
+}
+
+function movePlayer(dt) {
+  if (!running || activeMessage) return;
+
+  const frame = Math.min(dt / 16.67, 2);
+
+  player.vx = 0;
+
+  if (keys.left) {
+    player.vx = -player.speed;
+    player.facing = -1;
+  }
+
+  if (keys.right) {
+    player.vx = player.speed;
+    player.facing = 1;
+  }
+
+  player.x += player.vx * frame;
+  player.walk += Math.abs(player.vx) * frame * 0.2;
+
+  player.vy += 0.19 * frame;
+  if (player.vy > 4.5) player.vy = 4.5;
+
+  const previousBottom = player.y + player.h;
+  player.y += player.vy * frame;
+  player.grounded = false;
+
+  for (const p of platforms) {
+    const overlapX =
+      player.x + player.w > p.x &&
+      player.x < p.x + p.w;
+
+    const currentBottom = player.y + player.h;
+
+    if (
+      overlapX &&
+      player.vy >= 0 &&
+      previousBottom <= p.y + 1 &&
+      currentBottom >= p.y
+    ) {
+      player.y = p.y - player.h;
+      player.vy = 0;
+      player.grounded = true;
+    }
+  }
+
+  if (player.x < 0) player.x = 0;
+
+  // Falling returns Rody to the beginning of the stage
+  if (player.y > H + 15) {
+    player.x = Math.max(15, cameraX + 15);
+    player.y = 90;
+    player.vy = 0;
+  }
+
+  // Gouda follows Rody
+  const targetX = player.x - 14;
+
+  if (friend.x < targetX) {
+    friend.x += Math.min(1.05 * frame, targetX - friend.x);
+  } else if (friend.x > targetX + 3) {
+    friend.x -= Math.min(1.05 * frame, friend.x - targetX - 3);
+  }
+
+  friend.y += (player.y - friend.y) * 0.12 * frame;
+  friend.walk += Math.abs(player.vx) * frame * 0.2;
+
+  // Camera
+  cameraX = Math.max(0, player.x - 105);
+  cameraX = Math.min(cameraX, level.length - W);
+
+  // Collect hearts
+  hearts.forEach(h => {
+    if (h.collected) return;
+
+    const dx = player.x + player.w / 2 - h.x;
+    const dy = player.y + player.h / 2 - h.y;
+
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 13) {
+      h.collected = true;
+      collected++;
+      updateHearts();
+
+      showMessage("جميل يا Rody جمعتي قلب جديد ♥ كملي المغامره وشوفي ايه مستنيكي");
+    }
+  });
+
+  // Reach exit
+  if (
+    player.x + player.w >= level.length - 35 &&
+    !checkpointMessage
+  ) {
+    checkpointMessage = true;
+
+    if (levelIndex === levels.length - 1) {
+      finishGame();
+    } else {
+      showMessage(level.message, "المرحله اللي بعدها");
+    }
+  }
+}
+
+function render() {
+  drawBackground();
+  drawPlatforms();
+  drawHearts();
+  drawExit();
+
+  // Draw Gouda behind Rody
+  drawCharacter(
+    friend.x - cameraX,
+    friend.y,
+    "gouda",
+    friend.walk,
+    player.facing
+  );
+
+  drawCharacter(
+    player.x - cameraX,
+    player.y,
+    "rody",
+    player.walk,
+    player.facing
+  );
+
+  if (!activeMessage && running && elapsed < 4500) {
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "6px monospace";
+    ctx.fillText("RODY", player.x - cameraX - 2, player.y - 5);
+    ctx.fillText("GOUDA", friend.x - cameraX - 5, friend.y - 5);
+  }
+}
+
+function loop(now) {
+  if (!running) return;
+
+  const dt = Math.min(now - lastTime, 32);
+  lastTime = now;
+  elapsed += dt;
+
+  movePlayer(dt);
+  render();
+
+  requestAnimationFrame(loop);
+}
+
+// Keyboard controls
+document.addEventListener("keydown", e => {
+  if (
+    ["ArrowLeft", "ArrowRight", "ArrowUp", "Space", " "].includes(e.code)
+  ) {
+    e.preventDefault();
+  }
+
+  if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = true;
+  if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = true;
+
+  if (
+    (e.code === "ArrowUp" || e.code === "Space" || e.code === "KeyW") &&
+    player.grounded &&
+    running &&
+    !activeMessage
+  ) {
+    player.vy = player.jump;
+    player.grounded = false;
+  }
+});
+
+document.addEventListener("keyup", e => {
+  if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = false;
+  if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = false;
+});
+
+function bindButton(id, onDown, onUp) {
+  const el = document.getElementById(id);
+
+  el.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    onDown();
+  });
+
+  el.addEventListener("pointerup", e => {
+    e.preventDefault();
+    onUp();
+  });
+
+  el.addEventListener("pointercancel", onUp);
+  el.addEventListener("lostpointercapture", onUp);
+}
+
+bindButton("left", () => keys.left = true, () => keys.left = false);
+bindButton("right", () => keys.right = true, () => keys.right = false);
+
+document.getElementById("jump").addEventListener("pointerdown", e => {
+  e.preventDefault();
+
+  if (player.grounded && running && !activeMessage) {
+    player.vy = player.jump;
+    player.grounded = false;
+  }
+});
+
+document.getElementById("jump").addEventListener("contextmenu", e => {
+  e.preventDefault();
+});
+
+// Stop movement when the tab loses focus
+window.addEventListener("blur", () => {
+  keys.left = false;
+  keys.right = false;
+});
+
+// Initial preview
+level = levels[0];
+buildLevel();
+render();
+</script>
+</body>
+</html>
