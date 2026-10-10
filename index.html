@@ -1,469 +1,420 @@
 
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Rody & Gouda - Pixel Run</title>
+<title>Rody & Gouda</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101323;color:#fff;font-family:Tahoma,Arial,sans-serif;overflow:hidden}
-#app{height:100dvh;display:flex;align-items:center;justify-content:center;position:relative;background:#101323}
-#game{width:100%;height:auto;max-height:100dvh;aspect-ratio:16/9;object-fit:contain;image-rendering:pixelated;display:block}
-#top{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;direction:ltr}
-.logo{font-size:12px;font-weight:bold;letter-spacing:2px;color:#ffb3d2;text-shadow:2px 2px #39233f}
-.stats{text-align:right;direction:rtl;background:#151a2ac9;border:1px solid #ffffff27;border-radius:9px;padding:9px 14px;min-width:112px}
-#score{font-size:24px;font-weight:bold;letter-spacing:2px}
-#best{font-size:11px;color:#b8bfd7;margin-top:4px}
-#stage{position:absolute;top:75px;left:15px;color:#ffffffad;font-size:11px;letter-spacing:1px;pointer-events:none}
-#overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#10132365;z-index:5}
-.panel{width:min(390px,100%);text-align:center;padding:26px 22px;background:#171b30f2;border:1px solid #ff9bc6;border-radius:14px;box-shadow:0 15px 60px #0006}
-.eyebrow{font-size:10px;letter-spacing:3px;color:#ff9bc6}
-h1{font-size:29px;margin:12px 0 5px;color:#fff}
-h1 span{color:#ff9bc6}
-#description{font-size:13px;line-height:2;color:#c8cce0;margin:14px 0 20px}
-.btn{border:0;background:#ff9bc6;color:#211627;padding:13px 27px;border-radius:7px;font-size:14px;font-weight:bold;cursor:pointer}
-.hint{font-size:10px;color:#929bb9;margin-top:17px}
-#bottomHint{position:absolute;bottom:15px;left:0;right:0;text-align:center;font-size:10px;color:#ffffff9c;pointer-events:none}
-#mobileJump{position:absolute;bottom:40px;right:20px;width:75px;height:75px;border-radius:50%;background:#ff9bc62b;border:2px solid #ffb2d1;color:white;font-size:24px;display:none;touch-action:manipulation}
-@media(pointer:coarse){#mobileJump{display:block}#bottomHint{bottom:12px;left:15px;right:auto;max-width:190px;text-align:left}}
-@media(max-width:500px){.panel{padding:20px 15px}h1{font-size:24px}#score{font-size:20px}#top{top:10px;left:10px;right:10px}}
+body{
+ margin:0;background:#f5f3ef;color:#282d3a;
+ font-family:Arial,Tahoma,sans-serif;
+}
+main{
+ min-height:100vh;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;padding:16px;
+}
+header{width:min(800px,100%);display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.logo{font-weight:800;font-size:19px;letter-spacing:-1px}
+.logo span{color:#e77e9c}
+.scorebox{text-align:left;font-size:12px;color:#777}
+#score{font-size:23px;font-weight:bold;color:#282d3a}
+.game{
+ position:relative;width:min(800px,100%);
+ border-radius:18px;overflow:hidden;
+ box-shadow:0 12px 35px #31334215;background:#e8f1ed;
+}
+canvas{display:block;width:100%;height:auto;touch-action:manipulation}
+#overlay{
+ position:absolute;inset:0;display:flex;align-items:center;
+ justify-content:center;background:#f5f3efcf;padding:18px;
+}
+.panel{text-align:center;max-width:330px}
+.avatar{font-size:36px;margin-bottom:10px}
+h1{font-size:28px;margin:8px 0}
+h1 span{color:#e77e9c}
+p{font-size:14px;line-height:1.9;color:#686d79}
+button{
+ border:0;border-radius:10px;padding:13px 25px;
+ background:#e77e9c;color:white;font-weight:bold;
+ font-size:15px;cursor:pointer;
+}
+button:active{transform:scale(.97)}
+.hint{font-size:11px;color:#92939b;margin-top:14px}
+footer{width:min(800px,100%);display:flex;justify-content:space-between;align-items:center;margin-top:15px;gap:12px}
+footer span{font-size:11px;color:#858691}
+#jumpBtn{padding:12px 24px;touch-action:manipulation}
+@media(max-width:480px){
+ main{padding:12px}
+ header{margin-bottom:12px}
+ .logo{font-size:16px}
+ #score{font-size:20px}
+ footer{margin-top:12px}
+}
 </style>
 </head>
 <body>
-<div id="app">
-<canvas id="game" width="960" height="540"></canvas>
+<main>
+<header>
+ <div class="logo">RODY <span>&</span> GOUDA</div>
+ <div class="scorebox">
+  <div>النتيجه</div>
+  <div id="score">00000</div>
+ </div>
+</header>
 
-<div id="top">
-  <div class="logo">RODY <span style="color:white">&</span> GOUDA</div>
-  <div class="stats">
-    <div id="score">00000</div>
-    <div id="best">BEST 00000</div>
-  </div>
-</div>
-
-<div id="stage">WORLD 01 · GREEN DREAM</div>
-
-<div id="overlay">
+<div class="game">
+ <canvas id="game" width="800" height="400"></canvas>
+ <div id="overlay">
   <div class="panel">
-    <div class="eyebrow">A LITTLE GAME FOR YOU</div>
-    <h1>Rody <span>&</span> Gouda</h1>
-    <p id="description">رحله صغيره في عالم البكسل<br>اجري واقفزي وعدي كل العقبات<br>Gouda هيعمل كل حركاتك بالظبط<br>خلي بالك من الطريق يا Rody</p>
-    <button class="btn" id="mainBtn">ابدأي اللعب</button>
-    <div class="hint">SPACE / ↑ / CLICK TO JUMP</div>
+   <div class="avatar">🌷</div>
+   <h1 id="title">Rody <span>&</span> Gouda</h1>
+   <p id="desc">مغامره صغيره لينا<br>اجري واقفزي وعدي العقبات<br>Gouda هيفضل يجري معاكي طول الطريق</p>
+   <button id="start">ابدأي اللعب</button>
+   <div class="hint">اضغطي Space او المسّي الشاشه للقفز</div>
   </div>
+ </div>
 </div>
 
-<button id="mobileJump">↑</button>
-<div id="bottomHint">SPACE OR TAP TO JUMP</div>
-</div>
+<footer>
+ <span id="best">افضل نتيجه 00000</span>
+ <button id="jumpBtn">اقفزي ↑</button>
+</footer>
+</main>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-ctx.imageSmoothingEnabled = false;
+(function(){
+"use strict";
 
-const W=960,H=540,GROUND=420;
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
 const scoreEl=document.getElementById("score");
 const bestEl=document.getElementById("best");
-const stageEl=document.getElementById("stage");
 const overlay=document.getElementById("overlay");
-const mainBtn=document.getElementById("mainBtn");
-const description=document.getElementById("description");
+const startBtn=document.getElementById("start");
+const title=document.getElementById("title");
+const desc=document.getElementById("desc");
+const jumpBtn=document.getElementById("jumpBtn");
 
-let state="ready";
-let last=0, elapsed=0, distance=0, score=0;
-let speed=7, spawnTimer=0, groundOffset=0, sceneryOffset=0;
-let obstacles=[], particles=[];
-let best=0;
+const W=800,H=400,ground=320;
+let state="ready",score=0,best=0,speed=5;
+let last=0,time=0,spawn=0,groundMove=0;
+let obstacles=[],clouds=[];
+let animationId=0;
 
-try{best=Number(localStorage.getItem("rodyGoudaBest")||0)}catch(e){}
-bestEl.textContent="BEST "+String(best).padStart(5,"0");
+try{best=Number(localStorage.getItem("rg-best"))||0}catch(e){}
+bestEl.textContent="افضل نتيجه "+String(best).padStart(5,"0");
 
-const stages=[
- {name:"WORLD 01 · GREEN DREAM",sky:"#b7e5dc",sun:"#fff3c4",far:"#8bc7b7",near:"#5e9d91",ground:"#334d4a",top:"#83c6a5",line:"#b2e6bf",night:false},
- {name:"WORLD 02 · STARLIGHT",sky:"#202641",sun:"#f3d4bb",far:"#414d70",near:"#303b5a",ground:"#1c263c",top:"#677da2",line:"#a6c5ec",night:true},
- {name:"WORLD 03 · FROZEN PEAKS",sky:"#b6dced",sun:"#ffffff",far:"#8ab6d0",near:"#648fae",ground:"#536e88",top:"#e5f7ff",line:"#b8e5fa",night:false},
- {name:"WORLD 04 · COTTON SKY",sky:"#eebbd0",sun:"#fff0d1",far:"#d9a2c4",near:"#a777aa",ground:"#554368",top:"#c7a0cf",line:"#f0c7e1",night:false},
- {name:"WORLD 05 · LAST SUNSET",sky:"#f3a27f",sun:"#ffe1a2",far:"#c77791",near:"#865c83",ground:"#34304b",top:"#df8b9b",line:"#ffc5bc",night:false},
- {name:"WORLD 06 · OUR WORLD",sky:"#191e39",sun:"#ffd0e6",far:"#41476d",near:"#292e50",ground:"#171d32",top:"#e58eb8",line:"#ffbad9",night:true}
-];
+const girl={x:145,y:ground-54,w:30,h:54,vy:0,grounded:true};
+const boy={x:95};
 
-function stageNumber(){return Math.min(5,Math.floor(score/350))}
-function currentStage(){return stages[stageNumber()]}
-
-const rody={x:235,y:GROUND-58,vy:0,w:38,h:58,grounded:true};
-const gouda={x:145};
-
-function jump(){
- if(state==="ready"){startGame();return}
- if(state==="over"){return}
- if(state==="playing"&&rody.grounded){
-   rody.vy=-15.5;
-   rody.grounded=false;
-   burst(rody.x+15,GROUND-4,"#ff9bc6",5);
- }
+for(let i=0;i<6;i++){
+ clouds.push({x:i*180+30,y:40+(i%3)*35,s:0.7+(i%3)*0.15});
 }
 
-function startGame(){
- state="playing";
- elapsed=0;distance=0;score=0;speed=7;spawnTimer=45;
- groundOffset=0;sceneryOffset=0;
- obstacles=[];particles=[];
- rody.y=GROUND-rody.h;rody.vy=0;rody.grounded=true;
- overlay.style.display="none";
- updateHUD();
- last=performance.now();
- requestAnimationFrame(loop);
+function box(x,y,w,h,color){
+ ctx.fillStyle=color;
+ ctx.fillRect(x,y,w,h);
 }
 
-function endGame(){
- if(state!=="playing")return;
- state="over";
- if(score>best){
-   best=score;
-   try{localStorage.setItem("rodyGoudaBest",best)}catch(e){}
- }
- bestEl.textContent="BEST "+String(best).padStart(5,"0");
- description.innerHTML=
-   "السكور بتاعك <b style='color:#ff9bc6'>"+score+"</b><br>"+
-   "كل مره هتلعبي هتقدري توصلي ابعد<br>"+
-   "Gouda كان بيجري وراكي طول الطريق ❤️";
- mainBtn.textContent="العبي تاني";
- overlay.style.display="flex";
-}
-
-function updateHUD(){
- scoreEl.textContent=String(score).padStart(5,"0");
- stageEl.textContent=currentStage().name;
-}
-
-function rand(a,b){return a+Math.random()*(b-a)}
-
-function spawnObstacle(){
- const roll=Math.random();
- let type="cactus";
- if(roll>.76&&score>100)type="bird";
-
- if(type==="cactus"){
-   const tall=Math.random()>.5;
-   obstacles.push({
-     type,x:W+30,
-     y:GROUND-(tall?67:46),
-     w:tall?30:23,h:tall?67:46,
-     color:Math.random()>.5?"#315f4c":"#47765b"
-   });
- }else{
-   obstacles.push({
-     type,x:W+30,y:GROUND-rand(62,94),
-     w:48,h:28,phase:rand(0,6)
-   });
- }
-}
-
-function burst(x,y,color,n){
- for(let i=0;i<n;i++){
-   particles.push({x,y,vx:rand(-3,3),vy:rand(-4,1),life:rand(15,28),color,size:rand(3,6)});
- }
-}
-
-function update(dt){
- const f=dt/16.667;
- elapsed+=dt;
- distance+=speed*f;
- groundOffset=(groundOffset+speed*f)%70;
- sceneryOffset=(sceneryOffset+speed*.25*f)%960;
-
- speed=Math.min(13.5,7+score*.003);
- score=Math.floor(distance/10);
- updateHUD();
-
- rody.vy+=.72*f;
- rody.y+=rody.vy*f;
-
- if(rody.y>=GROUND-rody.h){
-   rody.y=GROUND-rody.h;
-   rody.vy=0;
-   rody.grounded=true;
- }
-
- spawnTimer-=f;
- if(spawnTimer<=0){
-   spawnObstacle();
-   spawnTimer=rand(49,79)*(7/speed);
- }
-
- for(const o of obstacles){
-   o.x-=speed*f;
-   if(o.type==="bird")o.phase+=.2*f;
- }
-
- obstacles=obstacles.filter(o=>o.x+o.w>-20);
-
- // Both characters share the exact same jump timing
- for(const o of obstacles){
-   const hitX1=rody.x+27>o.x+4&&rody.x+8<o.x+o.w-4;
-   const hitY1=rody.y+rody.h-5>o.y+4&&rody.y+5<o.y+o.h-2;
-   const gx=rody.x-90;
-   const hitX2=gx+27>o.x+4&&gx+8<o.x+o.w-4;
-   const hitY2=rody.y+rody.h-5>o.y+4&&rody.y+5<o.y+o.h-2;
-   if((hitX1&&hitY1)||(hitX2&&hitY2)){
-     endGame();
-     return;
-   }
- }
-
- for(const p of particles){
-   p.x+=p.vx*f;p.y+=p.vy*f;p.vy+=.15*f;p.life-=f;
- }
- particles=particles.filter(p=>p.life>0);
-}
-
-function rect(x,y,w,h,c){
- ctx.fillStyle=c;
- ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+function roundRect(x,y,w,h,r,color){
+ ctx.fillStyle=color;
+ ctx.beginPath();
+ ctx.roundRect(x,y,w,h,r);
+ ctx.fill();
 }
 
 function drawBackground(){
- const s=currentStage();
- rect(0,0,W,H,s.sky);
+ const sky=ctx.createLinearGradient(0,0,0,H);
+ sky.addColorStop(0,"#e4f1ec");
+ sky.addColorStop(1,"#f8e9e5");
+ box(0,0,W,H,sky);
 
- // Sun or moon
- rect(760,90,66,66,s.sun);
- rect(770,80,46,8,s.sun);
- rect(750,105,8,36,s.sun);
+ // Sun
+ ctx.fillStyle="#f5d6a3";
+ ctx.beginPath();
+ ctx.arc(675,80,30,0,Math.PI*2);
+ ctx.fill();
 
- // Stars
- if(s.night){
-   for(let i=0;i<42;i++){
-     let x=(i*137-sceneryOffset*.25+W*3)%W;
-     let y=25+(i*71%240);
-     rect(x,y,3,3,i%4===0?"#ffe1ee":"#ffffffb0");
-   }
+ // Clouds
+ clouds.forEach(c=>{
+  ctx.fillStyle="#ffffffa8";
+  ctx.beginPath();
+  ctx.ellipse(c.x,c.y,29*c.s,10*c.s,0,0,Math.PI*2);
+  ctx.ellipse(c.x-15*c.s,c.y+4*c.s,17*c.s,9*c.s,0,0,Math.PI*2);
+  ctx.ellipse(c.x+15*c.s,c.y+4*c.s,17*c.s,9*c.s,0,0,Math.PI*2);
+  ctx.fill();
+ });
+
+ // Distant hills
+ ctx.fillStyle="#c8ded3";
+ ctx.beginPath();
+ ctx.moveTo(0,280);
+ for(let x=0;x<=W;x+=100){
+  ctx.quadraticCurveTo(x+50,225+(x%3)*8,x+100,280);
  }
+ ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
 
- // Pixel hills
- for(let i=0;i<8;i++){
-   let x=i*165-(sceneryOffset*.4%165);
-   rect(x,285,120,130,s.far);
-   rect(x+20,260,85,25,s.far);
-   rect(x+40,235,40,25,s.far);
-   rect(x+5,315,145,105,s.near);
-   rect(x+28,290,90,25,s.near);
-   rect(x+53,270,45,20,s.near);
+ ctx.fillStyle="#a9cdbb";
+ ctx.beginPath();
+ ctx.moveTo(0,300);
+ for(let x=0;x<=W;x+=120){
+  ctx.quadraticCurveTo(x+60,255,x+120,300);
  }
-
- // Trees, snowy pines or city buildings
- for(let i=0;i<14;i++){
-   let x=(i*83-sceneryOffset+W*4)%W;
-   if(stageNumber()===2){
-     rect(x+10,310,6,100,"#54718b");
-     rect(x,280,26,30,"#e8f7ff");
-     rect(x+4,260,18,25,"#e8f7ff");
-     rect(x+8,244,10,18,"#e8f7ff");
-   }else if(stageNumber()===4){
-     let bh=65+(i*37%95);
-     rect(x,GROUND-bh,38,bh,s.near);
-     rect(x+6,GROUND-bh+12,5,7,"#ffe0a2");
-     rect(x+20,GROUND-bh+28,5,7,"#ffe0a2");
-     rect(x+6,GROUND-bh+43,5,7,"#ffe0a2");
-   }else if(stageNumber()===0||stageNumber()===1){
-     rect(x+11,330,10,90,"#55473f");
-     rect(x+2,300,29,30,s.near);
-     rect(x+6,280,21,20,s.near);
-     rect(x+11,265,11,15,s.near);
-   }else{
-     rect(x,335,38,85,s.near);
-     rect(x+7,310,24,25,s.near);
-     rect(x+13,292,12,18,s.near);
-   }
- }
+ ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
 
  // Ground
- rect(0,GROUND,W,H-GROUND,s.ground);
- rect(0,GROUND,W,7,s.top);
+ box(0,ground,W,H-ground,"#f3e5db");
+ box(0,ground,W,4,"#9ebfae");
 
- for(let x=-70;x<W+70;x+=70){
-   let xx=x-groundOffset;
-   rect(xx,GROUND+22,35,4,s.line);
-   rect(xx+39,GROUND+40,9,4,s.line);
+ for(let x=-(groundMove%55);x<W;x+=55){
+  box(x,ground+23,23,3,"#d7c9c0");
+  box(x+30,ground+43,10,3,"#d7c9c0");
  }
 }
 
-function drawRody(x,y,frame){
- // shadow
- rect(x-3,GROUND-3,45,5,"#14182755");
+function drawPerson(x,y,isGirl,jumping){
+ // Shadow
+ ctx.globalAlpha=.13;
+ ctx.fillStyle="#343847";
+ ctx.beginPath();
+ ctx.ellipse(x+15,ground+2,18,4,0,0,Math.PI*2);
+ ctx.fill();
+ ctx.globalAlpha=1;
 
- // Hair silhouette
- rect(x+8,y+2,24,17,"#38283f");
- rect(x+4,y+8,8,18,"#38283f");
- rect(x+25,y+8,11,21,"#38283f");
- rect(x+10,y+3,8,5,"#55405a");
+ ctx.save();
+ ctx.translate(x,y);
 
- // Face
- rect(x+11,y+13,20,17,"#f2c5a7");
- rect(x+28,y+18,4,5,"#f2c5a7");
- rect(x+25,y+18,3,3,"#38283f");
- rect(x+14,y+19,3,3,"#38283f");
- rect(x+13,y+26,12,3,"#dc8e91");
+ // Hair behind head
+ roundRect(4,2,23,20,8,isGirl?"#463544":"#343648");
 
- // Pink hair ribbon
- rect(x+5,y+6,8,5,"#ff8fbe");
- rect(x+4,y+4,4,4,"#ffc2dd");
+ // Head
+ roundRect(6,5,20,21,7,isGirl?"#f2c4a7":"#dfb08e");
 
- // Shirt
- rect(x+8,y+31,25,16,"#f08ab8");
- rect(x+12,y+32,15,4,"#ffb9d5");
- rect(x+4,y+35,6,12,"#f2c5a7");
- rect(x+31,y+35,6,12,"#f2c5a7");
+ // Hair fringe
+ roundRect(4,3,22,8,5,isGirl?"#463544":"#343648");
+ box(4,8,4,9,isGirl?"#463544":"#343648");
+
+ if(isGirl){
+  // Hair at the back
+  roundRect(23,11,6,19,3,"#463544");
+  // Hair bow
+  box(4,4,7,5,"#e77e9c");
+ }
+
+ // Eyes
+ box(11,14,2,2,"#34303b");
+ box(21,14,2,2,"#34303b");
+ box(15,20,5,1,"#c27c7b");
+
+ // Body
+ roundRect(4,27,23,16,5,isGirl?"#e77e9c":"#729ed0");
+
+ // Arms
+ roundRect(0,29,6,15,3,isGirl?"#f2c4a7":"#dfb08e");
+ roundRect(26,29,6,15,3,isGirl?"#f2c4a7":"#dfb08e");
 
  // Legs
- if(rody.grounded){
-   const step=Math.sin(elapsed*.018);
-   if(Math.abs(step)>.2){
-     rect(x+10,y+46,8,8,"#66578d");
-     rect(x+23,y+46,8,8,"#66578d");
-     rect(x+(step>0?8:13),y+52,11,5,"#f6f2ff");
-     rect(x+(step>0?22:27),y+52,11,5,"#f6f2ff");
-   }else{
-     rect(x+11,y+46,8,9,"#66578d");
-     rect(x+23,y+46,8,9,"#66578d");
-     rect(x+8,y+53,12,5,"#f6f2ff");
-     rect(x+22,y+53,12,5,"#f6f2ff");
-   }
+ const step=Math.sin(time*.02);
+ ctx.fillStyle=isGirl?"#635b88":"#465575";
+
+ if(jumping){
+  roundRect(7,41,7,9,3,ctx.fillStyle);
+  roundRect(19,41,7,9,3,ctx.fillStyle);
+  roundRect(3,47,12,5,3,"#fff");
+  roundRect(18,47,12,5,3,"#fff");
  }else{
-   rect(x+10,y+46,9,7,"#66578d");
-   rect(x+24,y+45,9,7,"#66578d");
-   rect(x+8,y+51,11,5,"#f6f2ff");
-   rect(x+24,y+50,11,5,"#f6f2ff");
+  roundRect(7,41,7,10,3,ctx.fillStyle);
+  roundRect(19,41,7,10,3,ctx.fillStyle);
+
+  if(step>0){
+   roundRect(3,48,12,5,3,"#fff");
+   roundRect(19,46,12,5,3,"#fff");
+  }else{
+   roundRect(7,46,12,5,3,"#fff");
+   roundRect(16,48,12,5,3,"#fff");
+  }
  }
+
+ ctx.restore();
 }
 
-function drawGouda(x,y){
- // Same pose and same jump height as Rody
- rect(x-2,GROUND-3,45,5,"#14182755");
-
- // Hair
- rect(x+8,y+2,24,17,"#28263b");
- rect(x+5,y+7,8,15,"#28263b");
- rect(x+27,y+6,7,10,"#28263b");
-
- // Face
- rect(x+11,y+13,20,17,"#dba986");
- rect(x+14,y+18,3,3,"#252238");
- rect(x+25,y+18,3,3,"#252238");
- rect(x+18,y+25,9,2,"#945b5e");
-
- // Blue shirt
- rect(x+8,y+31,25,16,"#63b7e9");
- rect(x+12,y+33,16,4,"#a4ddf7");
- rect(x+4,y+35,6,12,"#dba986");
- rect(x+31,y+35,6,12,"#dba986");
-
- // Legs follow Rody's exact pose
- if(rody.grounded){
-   const step=Math.sin(elapsed*.018);
-   rect(x+10,y+46,8,8,"#394d7d");
-   rect(x+23,y+46,8,8,"#394d7d");
-   rect(x+(step>.2?8:13),y+52,11,5,"#fff");
-   rect(x+(step>.2?22:27),y+52,11,5,"#fff");
+function drawObstacle(o){
+ if(o.type===0){
+  // Simple tree stump
+  roundRect(o.x,o.y,o.w,o.h,5,"#99745f");
+  roundRect(o.x-5,o.y-5,o.w+10,11,5,"#6e9b7b");
+  roundRect(o.x+5,o.y-12,o.w-2,13,5,"#85b595");
  }else{
-   rect(x+10,y+46,9,7,"#394d7d");
-   rect(x+24,y+45,9,7,"#394d7d");
-   rect(x+8,y+51,11,5,"#fff");
-   rect(x+24,y+50,11,5,"#fff");
+  // Rock
+  ctx.fillStyle="#8e9aab";
+  ctx.beginPath();
+  ctx.moveTo(o.x,o.y+o.h);
+  ctx.lineTo(o.x+4,o.y+8);
+  ctx.lineTo(o.x+o.w*.45,o.y);
+  ctx.lineTo(o.x+o.w-3,o.y+10);
+  ctx.lineTo(o.x+o.w,o.y+o.h);
+  ctx.closePath();
+  ctx.fill();
  }
-}
-
-function drawCactus(o){
- const x=o.x,y=o.y;
- rect(x+8,y,12,o.h,o.color);
- rect(x+2,y+15,8,7,o.color);
- rect(x+2,y+15,5,17,o.color);
- rect(x+19,y+26,8,7,o.color);
- rect(x+22,y+26,5,16,o.color);
- rect(x+10,y+4,3,5,"#81b68b");
-}
-
-function drawBird(o){
- const flap=Math.sin(o.phase)>0?0:8;
- rect(o.x+12,o.y+9,24,12,"#453951");
- rect(o.x+28,o.y+4,12,11,"#453951");
- rect(o.x+37,o.y+8,9,4,"#eeb9bd");
- rect(o.x+7,o.y+flap,19,5,"#66516f");
- rect(o.x+3,o.y+flap-3,9,5,"#66516f");
- rect(o.x+18,o.y+20,5,5,"#453951");
 }
 
 function draw(){
  drawBackground();
 
- for(const o of obstacles){
-   if(o.type==="bird")drawBird(o);
-   else drawCactus(o);
- }
+ obstacles.forEach(drawObstacle);
 
- for(const p of particles){
-   rect(p.x,p.y,p.size,p.size,p.color);
- }
+ // Gouda follows the same jump state as Rody
+ drawPerson(boy.x,girl.y,false,!girl.grounded);
+ drawPerson(girl.x,girl.y,true,!girl.grounded);
 
- // Gouda mirrors Rody exactly, only positioned behind her
- drawGouda(rody.x-90,rody.y);
- drawRody(rody.x,rody.y);
-
- // Small name tags
- ctx.font="bold 12px monospace";
+ // Labels
  ctx.textAlign="center";
+ ctx.font="bold 11px Arial";
  ctx.fillStyle="#fff";
- ctx.fillText("GOUDA",rody.x-68,rody.y-13);
- ctx.fillStyle="#ffb5d3";
- ctx.fillText("RODY",rody.x+18,rody.y-13);
+ ctx.fillText("Gouda",boy.x+15,girl.y-8);
+ ctx.fillStyle="#d65d86";
+ ctx.fillText("Rody",girl.x+15,girl.y-8);
+}
+
+function reset(){
+ score=0;speed=5;time=0;spawn=40;groundMove=0;
+ obstacles=[];
+ girl.y=ground-girl.h;
+ girl.vy=0;girl.grounded=true;
+ boy.x=girl.x-50;
+ scoreEl.textContent="00000";
+}
+
+function start(){
+ cancelAnimationFrame(animationId);
+ reset();
+ state="playing";
+ overlay.style.display="none";
+ last=performance.now();
+ animationId=requestAnimationFrame(loop);
+}
+
+function jump(){
+ if(state==="ready"||state==="over"){
+  start();
+  return;
+ }
+
+ if(state==="playing"&&girl.grounded){
+  girl.vy=-12.5;
+  girl.grounded=false;
+ }
+}
+
+function finish(){
+ state="over";
+
+ if(score>best){
+  best=score;
+  try{localStorage.setItem("rg-best",String(best))}catch(e){}
+ }
+
+ bestEl.textContent="افضل نتيجه "+String(best).padStart(5,"0");
+ title.innerHTML="حاول تاني <span>♥</span>";
+ desc.innerHTML="وصلت ل "+score+" نقطه<br>Gouda كان بيجري معاكي طول الطريق<br>جاهزه تحققي نتيجه اعلى؟";
+ startBtn.textContent="العبي من جديد";
+ overlay.style.display="flex";
+}
+
+function update(dt){
+ const f=Math.min(dt/16.667,2);
+ time+=dt;
+ speed=Math.min(10,5+score/500);
+ groundMove+=speed*f;
+ score=Math.floor(time/100);
+ scoreEl.textContent=String(score).padStart(5,"0");
+
+ clouds.forEach(c=>{
+  c.x-=speed*.12*f;
+  if(c.x<-50)c.x=W+40;
+ });
+
+ girl.vy+=.65*f;
+ girl.y+=girl.vy*f;
+
+ if(girl.y>=ground-girl.h){
+  girl.y=ground-girl.h;
+  girl.vy=0;
+  girl.grounded=true;
+ }
+
+ // Gouda follows Rody and copies every jump
+ boy.x=girl.x-50;
+
+ spawn-=f;
+ if(spawn<=0){
+  const type=Math.random()<.55?0:1;
+  const h=type===0?36:27;
+  obstacles.push({
+   x:W+20,
+   y:ground-h,
+   w:type===0?25:30,
+   h,
+   type
+  });
+  spawn=65+Math.random()*40;
+ }
+
+ obstacles.forEach(o=>o.x-=speed*f);
+ obstacles=obstacles.filter(o=>o.x+o.w>-10);
+
+ // Rody's jump determines the run; Gouda mirrors the same pose
+ for(const o of obstacles){
+  const hitX=girl.x+girl.w-5>o.x+4&&girl.x+5<o.x+o.w-4;
+  const hitY=girl.y+girl.h-4>o.y+3;
+
+  if(hitX&&hitY){
+   finish();
+   return;
+  }
+ }
 }
 
 function loop(now){
  if(state!=="playing")return;
 
- const dt=Math.min(now-last||16.667,32);
+ const dt=Math.min(now-last,40);
  last=now;
 
  update(dt);
  draw();
 
- if(state==="playing")requestAnimationFrame(loop);
+ if(state==="playing"){
+  animationId=requestAnimationFrame(loop);
+ }
 }
 
-mainBtn.addEventListener("click",()=>{
- if(state==="over"){
-   startGame();
- }else{
-   startGame();
- }
-});
-
-window.addEventListener("keydown",e=>{
- if(["Space","ArrowUp","ArrowDown"].includes(e.code))e.preventDefault();
-
- if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW"){
-   if(!e.repeat)jump();
- }
-});
-
-canvas.addEventListener("pointerdown",e=>{
- if(state==="playing")jump();
-});
-
-document.getElementById("mobileJump").addEventListener("pointerdown",e=>{
+startBtn.addEventListener("click",start);
+jumpBtn.addEventListener("pointerdown",e=>{
  e.preventDefault();
  jump();
 });
 
-function preview(){
- drawBackground();
- drawGouda(rody.x-90,rody.y);
- drawRody(rody.x,rody.y);
- drawCactus({x:700,y:GROUND-55,w:25,h:55,color:"#315f4c"});
-}
-preview();
+canvas.addEventListener("pointerdown",()=>{
+ jump();
+});
+
+window.addEventListener("keydown",e=>{
+ if(e.code==="Space"||e.code==="ArrowUp"||e.code==="KeyW"){
+  e.preventDefault();
+  if(!e.repeat)jump();
+ }
+});
+
+window.addEventListener("blur",()=>{
+ if(state==="playing")last=performance.now();
+});
+
+draw();
+})();
 </script>
 </body>
 </html>
